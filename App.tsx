@@ -33,7 +33,7 @@ export default function App() {
       >
         <Tab.Screen 
           name="Dashboard" 
-          component={Dashboard} 
+          component={Dashboard    } 
           options={{ headerShown: false }} // Hide header for the tab screens
         />
         <Tab.Screen 
