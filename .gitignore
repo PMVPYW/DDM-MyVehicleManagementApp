@@ -37,3 +37,6 @@ yarn-error.*
 
 #api_tokens
 api_tokens.json
+
+android/
+ios/

@@ -5,12 +5,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from './components/dashboard/dashboard';
 import VehiclesScreen from './components/vehicles/Vehicles';
+import CreateVehicle from './components/create_vehicle/CreateVehicle';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  return (
+  return (  
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -20,8 +21,12 @@ export default function App() {
             if (route.name === 'Dashboard') {
               iconName = focused ? 'home' : 'home-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
-            } else if (route.name === 'Vehicles') {
-              iconName = focused ? 'car' : 'car-outline'; // Example icon names
+            } else if (route.name === 'CreateVehicle') {
+              iconName = focused ? 'add-circle' : 'add-circle-outline'; // Example icon names
+              color = focused ? 'blue' : 'gray'
+            } 
+            else if (route.name === 'Vehicles') {
+              iconName = focused ? 'car-sport' : 'car-sport-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
             }
 
@@ -29,12 +34,21 @@ export default function App() {
           },
           tabBarActiveTintColor: 'blue',
           tabBarInactiveTintColor: 'gray',
+          tabBarStyle: {margin: 6,
+            borderRadius: 12,
+            height: 56
+          },
         })}
       >
         <Tab.Screen 
           name="Dashboard" 
           component={Dashboard    } 
           options={{ headerShown: false }} // Hide header for the tab screens
+        />
+        <Tab.Screen 
+          name="CreateVehicle" 
+          component={CreateVehicle} 
+          options={{ headerShown: true }} // Hide header for the tab screens
         />
         <Tab.Screen 
           name="Vehicles" 
