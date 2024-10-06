@@ -10,7 +10,7 @@ const Dashboard = () => {
       <Text style={styles.text}>Home Screen</Text>
       <Button
         title="Go to Vehicles"
-        onPress={() => navigation.navigate('Vehicles')}
+        onPress={() => navigation.navigate('Veículos')}
       />
     </View>
   );
