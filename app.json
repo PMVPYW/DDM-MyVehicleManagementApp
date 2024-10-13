@@ -1,5 +1,6 @@
 {
   "expo": {
+    "entryPoint": "./App.tsx",
     "name": "DDM-MyVehicleManagementTracker",
     "slug": "DDM-MyVehicleManagementTracker",
     "scheme": "ddm-vehiclemanageº://",

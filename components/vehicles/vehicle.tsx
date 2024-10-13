@@ -21,7 +21,6 @@ interface Car {
   
 
 const Vehicle = (props: Props) => {
-    console.error(props.vehicle.item.id)
   return (
     <View className="w-1/2 my-2">
         <View className="w-11/12 bg-gray-300 h-80 rounded-xl mx-auto">

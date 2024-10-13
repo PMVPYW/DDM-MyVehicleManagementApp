@@ -21,11 +21,11 @@ export default function App() {
             if (route.name === 'Dashboard') {
               iconName = focused ? 'home' : 'home-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
-            } else if (route.name === 'Criar Veículo') {
+            } else if (route.name === 'Create Vehicle') {
               iconName = focused ? 'add-circle' : 'add-circle-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
             } 
-            else if (route.name === 'Veículos') {
+            else if (route.name === 'My Vehicles') {
               iconName = focused ? 'car-sport' : 'car-sport-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
             }
@@ -48,12 +48,12 @@ export default function App() {
           options={{ headerShown: false }} // Hide header for the tab screens
         />
         <Tab.Screen 
-          name="Criar Veículo" 
+          name="Create Vehicle" 
           component={CreateVehicle} 
           options={{ headerShown: false }} // Hide header for the tab screens
         />
         <Tab.Screen 
-          name="Veículos" 
+          name="My Vehicles" 
           component={VehiclesScreen} 
           options={{ headerShown: false }} // Hide header for the tab screens
         />
