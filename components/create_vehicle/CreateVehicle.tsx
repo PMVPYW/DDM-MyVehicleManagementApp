@@ -1,22 +1,34 @@
 import {useCallback, useEffect, useState} from 'react';
 import { View, Text, Button, StyleSheet, SafeAreaView, Touchable, TouchableOpacity, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import {Picker} from '@react-native-picker/picker';
 import DoubleSlider from '../common/double_slider/DoubleSlider';
 import Row from './Row';
 
 
-function SaveCar(model){
-    fetch('https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getModel&model=' + model.model_id).then(response => {
+async function SaveCar(model, nav){
+    try {
+    var next_id = await AsyncStorage.getItem('last_id')
+    console.error(next_id)
+    next_id == null ? next_id = 0 : next_id = Number.parseInt(next_id) + 1
+    AsyncStorage.setItem('last_id', next_id.toString())
+    var response = await fetch('https://www.carqueryapi.com/api/0.3?cmd=getModel&model=' + model.model_id)
       // Check if the response is okay (status in the range 200-299)
       if (!response.ok) {
-          return '?([{"ExtColors":[],"IntColors":[]}]);'
+          return '[{"ExtColors":[],"IntColors":[]}]'
       }
-      return response.text();
-  })
-  .then(data => {
-      const car_data = JSON.parse(data.slice(data.indexOf('(') + 1, data.lastIndexOf(')')));
-  })
+      const car_data = await response.json();
+      console.error(car_data);
+      car_data[0].id = next_id
+      var val = await AsyncStorage.getItem('vehicles')
+      console.error(val)
+      const new_data = val ? [...JSON.parse(val), car_data[0]] : [car_data[0]]; // Handle case if 'vehicles' is null
+      await AsyncStorage.setItem('vehicles', JSON.stringify(new_data))
+      nav.navigate('My Vehicles')
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 const CreateVehicle = () => {
@@ -39,15 +51,14 @@ const CreateVehicle = () => {
       const [models, setModels] = useState([])
       //get years
       useEffect(()=>{
-        fetch('https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getYears').then(response => {
+        fetch('https://www.carqueryapi.com/api/0.3?cmd=getYears').then(response => {
           // Check if the response is okay (status in the range 200-299)
           if (!response.ok) {
-              return '?({ "Years": {"min_year":"0", "max_year":"0"} });'
+              return '{ "Years": {"min_year":"0", "max_year":"0"}'
           }
-          return response.text();
+          return response.json();
       })
-      .then(data => {
-          const jsonData = JSON.parse(data.slice(data.indexOf('(') + 1, data.lastIndexOf(')')));
+      .then(jsonData => {
           limits.min_year = Number.parseInt(jsonData.Years.min_year)
           limits.max_year =  Number.parseInt(jsonData.Years.max_year)
           const arr = []
@@ -61,15 +72,15 @@ const CreateVehicle = () => {
       }, [])
       //get makes by year
       useEffect(()=>{
-        fetch(`https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getMakes&year=${year}`).then(response => {
+        fetch(`https://www.carqueryapi.com/api/0.3?cmd=getMakes&year=${year}`).then(response => {
           // Check if the response is okay (status in the range 200-299)
           if (!response.ok) {
-              return '?({ "Makes": {"min_year":"0", "max_year":"0"} });'
+              return '{ "Makes": {"min_year":"0", "max_year":"0"} }'
           }
-          return response.text();
+          return response.json();
       })
-      .then(data => {
-          const jsonData = JSON.parse(data.slice(data.indexOf('(') + 1, data.lastIndexOf(')')));
+      .then(jsonData => {
+        console.error(jsonData.Makes)
           setMakes(jsonData.Makes)
           setMake(jsonData.Makes[0].make_id)
       })
@@ -77,15 +88,14 @@ const CreateVehicle = () => {
 
       //get models by filters
       useEffect(()=>{
-          fetch(`https://www.carqueryapi.com/api/0.3/?callback=?&cmd=getTrims&year=${year}&make=${make}&body=${body}&doors=${doors}&drive=${drive}&fuel=${fuel}&min_power=${powerInterval[0]}&max_power=${powerInterval[1]}`).then(response => {
+          fetch(`https://www.carqueryapi.com/api/0.3?cmd=getTrims&year=${year}&make=${make}&body=${body}&doors=${doors}&drive=${drive}&fuel=${fuel}&min_power=${powerInterval[0]}&max_power=${powerInterval[1]}`).then(response => {
             // Check if the response is okay (status in the range 200-299)
             if (!response.ok) {
-                return '?({"Trims":[]});'
+                return '{"Trims":[]}'
             }
-            return response.text();
+            return response.json();
         })
-        .then(data => {
-            const jsonData = JSON.parse(data.slice(data.indexOf('(') + 1, data.lastIndexOf(')')));
+        .then(jsonData => {
             setModels(jsonData.Trims)
             setModel(jsonData.Trims[0] ? jsonData.Trims[0] : {})
         })
@@ -216,7 +226,7 @@ const CreateVehicle = () => {
                 </View>
               </Row>
               <Row>
-                <TouchableOpacity onPress={SaveCar(model)} disabled={Object.keys(model).length == 0} className="w-11/12 rounded-xl p-4 mt-4" style={{backgroundColor: Object.keys(model).length == 0 ? 'gray' : 'blue'}}>
+                <TouchableOpacity onPress={()=>SaveCar(model, navigation)} disabled={Object.keys(model).length == 0} className="w-11/12 rounded-xl p-4 mt-4" style={{backgroundColor: Object.keys(model).length == 0 ? 'gray' : 'blue'}}>
                     <Text className="text-white text-center text-xl font-bold">Add Vehicle</Text>
                 </TouchableOpacity>
               </Row>

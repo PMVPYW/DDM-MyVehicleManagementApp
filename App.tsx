@@ -7,10 +7,16 @@ import Dashboard from './components/dashboard/dashboard';
 import VehiclesScreen from './components/vehicles/Vehicles';
 import CreateVehicle from './components/create_vehicle/CreateVehicle';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  //AsyncStorage.clear(); //#TODO --> remove this line
+  AsyncStorage.getItem('vehicles').then(val => {
+    if (val == null) {
+      AsyncStorage.setItem('vehicles', JSON.stringify([]));
+    }});
   return (  
     <NavigationContainer>
       <Tab.Navigator
