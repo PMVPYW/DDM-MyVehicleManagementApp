@@ -10,22 +10,19 @@ import Row from './Row';
 async function SaveCar(model, nav){
     try {
     var next_id = await AsyncStorage.getItem('last_id')
-    console.error(next_id)
     next_id == null ? next_id = 0 : next_id = Number.parseInt(next_id) + 1
     AsyncStorage.setItem('last_id', next_id.toString())
-    var response = await fetch('https://www.carqueryapi.com/api/0.3?cmd=getModel&model=' + model.model_id)
+    var response = await fetch('https://www.carqueryapi.com/api/0.3?cmd=getModel&model=' + model.id)
       // Check if the response is okay (status in the range 200-299)
       if (!response.ok) {
           return '[{"ExtColors":[],"IntColors":[]}]'
       }
       const car_data = await response.json();
-      console.error(car_data);
       car_data[0].id = next_id
       var val = await AsyncStorage.getItem('vehicles')
-      console.error(val)
-      const new_data = val ? [...JSON.parse(val), car_data[0]] : [car_data[0]]; // Handle case if 'vehicles' is null
+      const new_data = val ? [...JSON.parse(val), {...car_data[0]}] : [{...car_data[0]}]; // Handle case if 'vehicles' is null
       await AsyncStorage.setItem('vehicles', JSON.stringify(new_data))
-      nav.navigate('My Vehicles')
+      nav.navigate('My Vehicles', {rerender: next_id})
   } catch (error) {
     console.error(error)
   }
@@ -80,9 +77,8 @@ const CreateVehicle = () => {
           return response.json();
       })
       .then(jsonData => {
-        console.error(jsonData.Makes)
-          setMakes(jsonData.Makes)
-          setMake(jsonData.Makes[0].make_id)
+          setMakes(jsonData.Makes ?? [])
+          setMake(jsonData.Makes.length > 0 ? jsonData.Makes[0].make_id : {})
       })
       }, [year])
 
@@ -96,8 +92,8 @@ const CreateVehicle = () => {
             return response.json();
         })
         .then(jsonData => {
-            setModels(jsonData.Trims)
-            setModel(jsonData.Trims[0] ? jsonData.Trims[0] : {})
+            setModels(jsonData.Trims ?? [])
+            setModel(jsonData.Trims.length > 0 ? {id: jsonData.Trims[0].model_id} : {id: -1})
         })
       }, [year, make, body, doors, drive, fuel, powerInterval]);
 
@@ -216,9 +212,9 @@ const CreateVehicle = () => {
                   <Text className="ml-2 text-xl font-bold">Model</Text>
                   <View className="rounded-xl border-black border-2 bg-gray-200">
                     <Picker
-                      selectedValue={model}
+                      selectedValue={model.id}
                       onValueChange={(itemValue, itemIndex) =>
-                        setModel(itemValue)
+                        setModel({id: itemValue})
                       }>
                         {models.map((m) => <Picker.Item label={m.model_name + m.model_trim} key={m.model_id} value={m.model_id} />)}
                     </Picker>
@@ -226,7 +222,7 @@ const CreateVehicle = () => {
                 </View>
               </Row>
               <Row>
-                <TouchableOpacity onPress={()=>SaveCar(model, navigation)} disabled={Object.keys(model).length == 0} className="w-11/12 rounded-xl p-4 mt-4" style={{backgroundColor: Object.keys(model).length == 0 ? 'gray' : 'blue'}}>
+                <TouchableOpacity onPress={()=>{SaveCar(model, navigation)}} disabled={Object.keys(model).length == 0} className="w-11/12 rounded-xl p-4 mt-4" style={{backgroundColor: Object.keys(model).length == 0 ? 'gray' : 'blue'}}>
                     <Text className="text-white text-center text-xl font-bold">Add Vehicle</Text>
                 </TouchableOpacity>
               </Row>

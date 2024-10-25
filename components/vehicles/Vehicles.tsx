@@ -13,6 +13,9 @@ const VehiclesScreen = (props) => {
   useEffect(() => {
     AsyncStorage.getItem('vehicles').then(val => {
       setCars(JSON.parse(val));
+      JSON.parse(val).map((car) => {
+        console.warn(car.id, Object.keys(car).length, car);
+      });
     })
   }, []);
 
