@@ -18,9 +18,9 @@ async function SaveCar(model, nav){
           return '[{"ExtColors":[],"IntColors":[]}]'
       }
       const car_data = await response.json();
-      car_data[0].id = next_id
+      const data_to_save = {id: next_id, model_id: car_data[0].model_id}
       var val = await AsyncStorage.getItem('vehicles')
-      const new_data = val ? [...JSON.parse(val), {...car_data[0]}] : [{...car_data[0]}]; // Handle case if 'vehicles' is null
+      const new_data = val ? [...JSON.parse(val), {...data_to_save}] : [{...data_to_save}]; // Handle case if 'vehicles' is null
       await AsyncStorage.setItem('vehicles', JSON.stringify(new_data))
       nav.navigate('My Vehicles', {rerender: next_id})
   } catch (error) {
