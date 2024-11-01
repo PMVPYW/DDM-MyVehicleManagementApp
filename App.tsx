@@ -9,6 +9,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack';
 import VehiclePage from './components/VehiclePage/VehiclhePage';
+import FullScreenCamera from './components/VehiclePage/camera';
 
 const Tab = createBottomTabNavigator();
 
@@ -75,6 +76,7 @@ const VehiclesStack = () => {
   <Stack.Navigator>
   <Stack.Screen name="My Vehicles" component={VehiclesScreen} />
   <Stack.Screen name="Vehicle" component={VehiclePage} />
+  <Stack.Screen name="TakePhoto" component={FullScreenCamera} />
 
 </Stack.Navigator>
   )

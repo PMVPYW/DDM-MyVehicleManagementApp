@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import CountryFlag from "react-native-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
@@ -57,8 +57,8 @@ const Vehicle = (props: Props) => {
     }
   fetch(`https://www.carqueryapi.com/api/0.3?cmd=getModel&model=${props.vehicle?.model_id}`).then(res=>{
     res.json().then(data=>{
+      data[0].id = props.vehicle.id;
       setModel(data[0]);
-     
     })
   }).catch(err=>console.error(err));
 }, [props.vehicle]);
@@ -66,10 +66,10 @@ const Vehicle = (props: Props) => {
 
  
   return (
-    <TouchableOpacity onPressOut={()=>navigation.navigate('Vehicle', {vehicle: {...model}})} className="w-1/2 my-2">
+    <TouchableOpacity onPressOut={()=>{console.warn(model.id);navigation.navigate('Vehicle', {vehicle: props.vehicle, model: model})}} className="w-1/2 my-2">
         <View className="w-11/12 bg-gray-300 h-72 rounded-xl mx-auto">
           <View className="flex justify-center items-center w-full h-32 bg-gray-400 rounded-t-xl">
-            <MaterialCommunityIcons classname="mx-auto" name="camera" size={40} color="black" />
+          {props.vehicle.photo != undefined ? <Image className="w-full h-full object-cover rounded-t-xl" source={{uri: props.vehicle.photo}}/> : <MaterialCommunityIcons name="camera" size={40} color="black"/>}
           </View>
           <View className="h-40 w-full px-2 flex justify-evenly">
             <Text>Make: {model?.model_make_display ?? props.vehicle?.model_id}</Text>
