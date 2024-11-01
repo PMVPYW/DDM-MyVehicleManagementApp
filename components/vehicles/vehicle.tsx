@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import CountryFlag from "react-native-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
+import { useNavigation } from '@react-navigation/native';
 interface Car {
     id: number;
     plate?: string,
@@ -44,7 +45,9 @@ const  fuelIconMap = {
 }
 
 
+
 const Vehicle = (props: Props) => {
+  const navigation = useNavigation();
   const [model, setModel] = useState({});
   const [fuelIcon, setfuelIcon] = useState('');
   useEffect(()=>{
@@ -63,7 +66,7 @@ const Vehicle = (props: Props) => {
 
  
   return (
-    <View className="w-1/2 my-2">
+    <TouchableOpacity onPressOut={()=>navigation.navigate('Vehicle', {vehicle: {...model}})} className="w-1/2 my-2">
         <View className="w-11/12 bg-gray-300 h-72 rounded-xl mx-auto">
           <View className="flex justify-center items-center w-full h-32 bg-gray-400 rounded-t-xl">
             <MaterialCommunityIcons classname="mx-auto" name="camera" size={40} color="black" />
@@ -89,7 +92,7 @@ const Vehicle = (props: Props) => {
             </View>
           </View>
         </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

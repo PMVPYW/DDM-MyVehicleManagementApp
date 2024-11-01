@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from './components/dashboard/dashboard';
@@ -8,6 +7,8 @@ import VehiclesScreen from './components/vehicles/Vehicles';
 import CreateVehicle from './components/create_vehicle/CreateVehicle';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createStackNavigator } from '@react-navigation/stack';
+import VehiclePage from './components/VehiclePage/VehiclhePage';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,7 +32,7 @@ export default function App() {
               iconName = focused ? 'add-circle' : 'add-circle-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
             } 
-            else if (route.name === 'My Vehicles') {
+            else if (route.name === 'Garage') {
               iconName = focused ? 'car-sport' : 'car-sport-outline'; // Example icon names
               color = focused ? 'blue' : 'gray'
             }
@@ -59,11 +60,22 @@ export default function App() {
           options={{ headerShown: false }} // Hide header for the tab screens
         />
         <Tab.Screen 
-          name="My Vehicles" 
-          component={VehiclesScreen} 
+          name="Garage" 
+          component={VehiclesStack} 
           options={{ headerShown: false }} // Hide header for the tab screens
         />
       </Tab.Navigator>
     </NavigationContainer>
   );
+}
+const Stack = createStackNavigator();
+
+const VehiclesStack = () => {
+  return (
+  <Stack.Navigator>
+  <Stack.Screen name="My Vehicles" component={VehiclesScreen} />
+  <Stack.Screen name="Vehicle" component={VehiclePage} />
+
+</Stack.Navigator>
+  )
 }
