@@ -22,7 +22,7 @@ async function SaveCar(model, nav){
       var val = await AsyncStorage.getItem('vehicles')
       const new_data = val ? [...JSON.parse(val), {...data_to_save}] : [{...data_to_save}]; // Handle case if 'vehicles' is null
       await AsyncStorage.setItem('vehicles', JSON.stringify(new_data))
-      nav.navigate('My Vehicles', {rerender: next_id})
+      nav.navigate('My Vehicles', {rerender: new Date().getTime()})
   } catch (error) {
     console.error(error)
   }

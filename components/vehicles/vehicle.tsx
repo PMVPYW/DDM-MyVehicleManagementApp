@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-
+import CountryFlag from "react-native-country-flag";
+import { countryToAlpha2 } from "country-to-iso";
 interface Car {
     id: number;
     plate?: string,
@@ -47,27 +48,31 @@ const Vehicle = (props: Props) => {
   const [model, setModel] = useState({});
   const [fuelIcon, setfuelIcon] = useState('');
   useEffect(()=>{
+    if (Object.keys(props.vehicle).length === 0) {
+      print(props.vehicle)
+      return;
+    }
   fetch(`https://www.carqueryapi.com/api/0.3?cmd=getModel&model=${props.vehicle?.model_id}`).then(res=>{
-    console.error(`https://www.carqueryapi.com/api/0.3?cmd=getModel&model=${props.vehicle?.model_id}`)
     res.json().then(data=>{
       setModel(data[0]);
-      console.error(data);
-
-      fuelIcon
-
+     
     })
   }).catch(err=>console.error(err));
-}, [props.vehicle?.model_id]);
+}, [props.vehicle]);
   
 
  
   return (
     <View className="w-1/2 my-2">
-        <View className="w-11/12 bg-gray-300 h-80 rounded-xl mx-auto">
+        <View className="w-11/12 bg-gray-300 h-72 rounded-xl mx-auto">
+          <View className="flex justify-center items-center w-full h-32 bg-gray-400 rounded-t-xl">
+            <MaterialCommunityIcons classname="mx-auto" name="camera" size={40} color="black" />
+          </View>
+          <View className="h-40 w-full px-2 flex justify-evenly">
             <Text>Make: {model?.model_make_display ?? props.vehicle?.model_id}</Text>
             <Text>Model: {model?.model_name}</Text>
             <Text>Year: {model?.model_year}</Text>
-              <View className="flex flex-row items-center">
+            <View className="flex flex-row items-center">
               <Text className="align-text-top mr-2">Fuel:</Text>
               <MaterialCommunityIcons 
                   name={fuelIconMap[model?.model_engine_fuel]} 
@@ -75,7 +80,14 @@ const Vehicle = (props: Props) => {
                   color={fuelIcons[model?.model_engine_fuel]} 
               />
             </View>
-            <Text>Power: {model?.model_engine_power_hp} cv / {model?.model_engine_power_rpm} rpm</Text>
+            <Text>Power: {model?.model_engine_power_hp} cv</Text>
+            <View className="flex flex-row items-center ">
+              <Text className="align-text-top">Make Country: </Text>{model?.make_country ? <CountryFlag
+              className=" rounded-md border-0"
+              isoCode={countryToAlpha2(model?.make_country)}
+              size={20}/> : <></>}
+            </View>
+          </View>
         </View>
     </View>
   );
