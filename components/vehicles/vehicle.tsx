@@ -65,8 +65,8 @@ const Vehicle = (props: Props) => {
 
  
   return (
-    <TouchableOpacity onPress={()=>{console.warn(model.id);navigation.navigate('Vehicle', {vehicle: props.vehicle, model: {...model}, setter_vehicles: props.setter_vehicles})}} className="w-1/2 my-2">
-        <View className="w-11/12 bg-gray-300 h-72 rounded-xl mx-auto">
+    <TouchableOpacity onPress={()=>{console.warn(model.id);navigation.navigate('Vehicle', {vehicle: props.vehicle, model: {...model}, setter_vehicles: props.setter_vehicles})}} className="flex flex-grow w-1/2 my-2">
+        <View className="w-[95%] bg-gray-300 h-72 rounded-xl mx-auto">
           <View className="flex justify-center items-center w-full h-32 bg-gray-400 rounded-t-xl">
           {props.vehicle.photo != undefined ? <Image className="w-full h-full object-cover rounded-t-xl" source={{uri: props.vehicle.photo}}/> : <MaterialCommunityIcons name="camera" size={40} color="black"/>}
           </View>

@@ -8,8 +8,8 @@ import ValueField from "./ValueField";
 
 const VehiclePage = (props) => {
     const navigation = useNavigation();
-    const [photo, setPhoto] = useState(props.route.params.vehicle.photo);
-    console.error(props.route.params.model?.make_country)
+    const [photo, setPhoto] = useState(props.route.params?.vehicle.photo);
+    console.error(props.route.params.vehicle.photo)//essential in loading foto when coming back from TakePhoto
   return (
     <SafeAreaView className="w-full h-full">
         <TouchableOpacity onPressOut={()=>navigation.navigate('TakePhoto', {vehicle_id: props.route.params.vehicle.id, setter_vehicles: props.route.params.setter_vehicles, photo_setter: setPhoto})} className="w-full h-40 bg-gray-200 flex justify-center items-center">
