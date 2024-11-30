@@ -1,15 +1,29 @@
-import { SafeAreaView, Text, TouchableOpacity, Image, ScrollView, View } from "react-native"
+import { SafeAreaView, Text, TouchableOpacity, Image, ScrollView, View, FlatList } from "react-native"
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import CountryFlag from "react-native-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
 import ValueField from "./ValueField";
+import {FAB} from 'react-native-paper';
+
 
 const VehiclePage = (props) => {
     const navigation = useNavigation();
     const [photo, setPhoto] = useState(props.route.params?.vehicle.photo);
-    console.error(props.route.params.vehicle.photo)//essential in loading foto when coming back from TakePhoto
+    const [maintenance, setMaintenance] = useState([]);
+
+    //load maintenance from AsyncStorage
+    useEffect(()=>{
+      const loadMaintenance = async () => {
+        const maintenance = await AsyncStorage.getItem('maintenance');
+        if(maintenance != null) {
+          setMaintenance(JSON.parse(maintenance))
+        };
+      }
+      loadMaintenance();
+    },[])
+    console.error(props.route.params?.vehicle?.photo ?? '')//essential in loading foto when coming back from TakePhoto
   return (
     <SafeAreaView className="w-full h-full">
         <TouchableOpacity onPressOut={()=>navigation.navigate('TakePhoto', {vehicle_id: props.route.params.vehicle.id, setter_vehicles: props.route.params.setter_vehicles, photo_setter: setPhoto})} className="w-full h-40 bg-gray-200 flex justify-center items-center">
@@ -61,7 +75,25 @@ const VehiclePage = (props) => {
                 <ValueField name="Torque RPM" value={props.route.params.model?.model_engine_torque_rpm}/>
             </View>
           </View>
+          <View className="w-full h-fit m-4 px-2">
+            <Text className="text-2xl font-bold block">Maintenance</Text>
+            <View className="flex flex-row justify-around flex-wrap w-full max-w-full">
+              <FlatList numColumns={2} data={maintenance} keyExtractor={(item) => item.id} key={(item) => item.id} renderItem={({item})=>(
+                <View className="bg-gray-200 w-5/12 h-40 m-2">
+                  <Text className="text-xl font-bold">{item.title}</Text>
+                  <Text className="text-lg">{item.description}</Text>
+                   <Text className="text-xl">{item.price} €</Text>
+                  <Text className="text-xl">{item.date}</Text>
+                 </View>)}/>
+            </View>
+          </View> 
         </ScrollView>
+        <TouchableOpacity
+        onPress={() => navigation.navigate("Create Vehicle")}
+        className="absolute bottom-2 right-5 z-50"
+      >
+        <FAB icon="plus" mode="elevated"/>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }

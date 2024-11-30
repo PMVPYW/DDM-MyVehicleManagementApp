@@ -10,6 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createStackNavigator } from '@react-navigation/stack';
 import VehiclePage from './components/VehiclePage/VehiclhePage';
 import FullScreenCamera from './components/VehiclePage/camera';
+import { PaperProvider } from 'react-native-paper';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -20,53 +22,55 @@ export default function App() {
       AsyncStorage.setItem('vehicles', JSON.stringify([]));
     }});
   return (  
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+    <PaperProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
 
-            if (route.name === 'Dashboard') {
-              iconName = focused ? 'home' : 'home-outline'; // Example icon names
-              color = focused ? 'blue' : 'gray'
-            } else if (route.name === 'Create Vehicle') {
-              iconName = focused ? 'add-circle' : 'add-circle-outline'; // Example icon names
-              color = focused ? 'blue' : 'gray'
-            } 
-            else if (route.name === 'Garage') {
-              iconName = focused ? 'car-sport' : 'car-sport-outline'; // Example icon names
-              color = focused ? 'blue' : 'gray'
-            }
+              if (route.name === 'Dashboard') {
+                iconName = focused ? 'home' : 'home-outline'; // Example icon names
+                color = focused ? 'blue' : 'gray'
+              } else if (route.name === 'Create Vehicle') {
+                iconName = focused ? 'add-circle' : 'add-circle-outline'; // Example icon names
+                color = focused ? 'blue' : 'gray'
+              } 
+              else if (route.name === 'Garage') {
+                iconName = focused ? 'car-sport' : 'car-sport-outline'; // Example icon names
+                color = focused ? 'blue' : 'gray'
+              }
 
-            return <Ionicons name={iconName} size={32} color={color} />;
-          },
-          tabBarActiveTintColor: 'blue',
-          tabBarInactiveTintColor: 'gray',
-          tabBarStyle: {margin: 6,
-            borderRadius: 12,
-            height: 56,
-            borderColor: 'transparent'
-          },
-          
-        })}
-      >
-        <Tab.Screen 
-          name="Dashboard" 
-          component={Dashboard    } 
-          options={{ headerShown: false }} // Hide header for the tab screens
-        />
-        <Tab.Screen 
-          name="Create Vehicle" 
-          component={CreateVehicle} 
-          options={{ headerShown: false }} // Hide header for the tab screens
-        />
-        <Tab.Screen 
-          name="Garage" 
-          component={VehiclesStack} 
-          options={{ headerShown: false }} // Hide header for the tab screens
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+              return <Ionicons name={iconName} size={32} color={color} />;
+            },
+            tabBarActiveTintColor: 'blue',
+            tabBarInactiveTintColor: 'gray',
+            tabBarStyle: {margin: 6,
+              borderRadius: 12,
+              height: 56,
+              borderColor: 'transparent'
+            },
+
+          })}
+        >
+          <Tab.Screen 
+            name="Dashboard" 
+            component={Dashboard    } 
+            options={{ headerShown: false }} // Hide header for the tab screens
+          />
+          <Tab.Screen 
+            name="Create Vehicle" 
+            component={CreateVehicle} 
+            options={{ headerShown: false }} // Hide header for the tab screens
+          />
+          <Tab.Screen 
+            name="Garage" 
+            component={VehiclesStack} 
+            options={{ headerShown: false }} // Hide header for the tab screens
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 const Stack = createStackNavigator();
