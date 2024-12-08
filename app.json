@@ -1,5 +1,6 @@
 {
   "expo": {
+    "newArchEnabled": true,
     "entryPoint": "./App.tsx",
     "name": "DDM-MyVehicleManagementTracker",
     "slug": "DDM-MyVehicleManagementTracker",

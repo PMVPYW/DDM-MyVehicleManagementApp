@@ -100,8 +100,8 @@ const CreateVehicle = () => {
       return (
         <SafeAreaView className="h-full w-full mb-[62px] bg-white my-auto">
           <ScrollView className="mt-8">
-            <View className="mt-8">
-              <Text className="mx-auto p-2 text-2xl font-bold">Pesquisar Veículo</Text>
+            <View className="">
+              <Text className="mx-auto p-2 text-2xl font-bold">Search Vehicle</Text>
             </View>
             <View className="w-11/12 mt-2 mx-auto h-full flex flex-col space-x-2 items-center">
               <Row>

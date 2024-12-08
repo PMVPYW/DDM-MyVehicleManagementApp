@@ -11,6 +11,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import VehiclePage from './components/VehiclePage/VehiclhePage';
 import FullScreenCamera from './components/VehiclePage/camera';
 import { PaperProvider } from 'react-native-paper';
+import MaintenanceCreateForm from './components/VehiclePage/MaintenanceCreateForm';
 
 
 const Tab = createBottomTabNavigator();
@@ -81,7 +82,7 @@ const VehiclesStack = () => {
   <Stack.Screen name="My Vehicles" component={VehiclesScreen} />
   <Stack.Screen name="Vehicle" component={VehiclePage} />
   <Stack.Screen name="TakePhoto" component={FullScreenCamera} />
-
+  <Stack.Screen name="RegisterMaintenance" component={MaintenanceCreateForm} options={{ headerShown: false }}/>
 </Stack.Navigator>
   )
 }

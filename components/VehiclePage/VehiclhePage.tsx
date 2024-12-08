@@ -6,6 +6,8 @@ import CountryFlag from "react-native-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
 import ValueField from "./ValueField";
 import {FAB} from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 
 const VehiclePage = (props) => {
@@ -15,14 +17,19 @@ const VehiclePage = (props) => {
 
     //load maintenance from AsyncStorage
     useEffect(()=>{
+      
       const loadMaintenance = async () => {
         const maintenance = await AsyncStorage.getItem('maintenance');
+        console.warn(maintenance)
         if(maintenance != null) {
-          setMaintenance(JSON.parse(maintenance))
-        };
+          setMaintenance(JSON.parse(maintenance).filter((item) => item.vehicle_id == props.route.params.vehicle.id).sort((a, b) => new Date(a.date) - new Date(b.date)));
+          console.warn(JSON.parse(maintenance), "main123")
+        } 
+        
       }
       loadMaintenance();
     },[])
+
     console.error(props.route.params?.vehicle?.photo ?? '')//essential in loading foto when coming back from TakePhoto
   return (
     <SafeAreaView className="w-full h-full">
@@ -76,24 +83,22 @@ const VehiclePage = (props) => {
             </View>
           </View>
           <View className="w-full h-fit m-4 px-2">
-            <Text className="text-2xl font-bold block">Maintenance</Text>
+            <View className="flex flex-row items-center">
+              <Text className="text-2xl font-bold block">Maintenance</Text> <FAB onPress={()=>navigation.navigate("RegisterMaintenance", {vehicle_id: props.route.params.vehicle.id})} className="ml-2" icon="plus" mode="elevated"/>
+            </View>
+            
             <View className="flex flex-row justify-around flex-wrap w-full max-w-full">
-              <FlatList numColumns={2} data={maintenance} keyExtractor={(item) => item.id} key={(item) => item.id} renderItem={({item})=>(
-                <View className="bg-gray-200 w-5/12 h-40 m-2">
+              <FlatList numColumns={2} data={maintenance} nestedScrollEnabled={true} keyExtractor={(item) => item.id} key={(item) => item.id} renderItem={({item})=>(
+                <ScrollView nestedScrollEnabled={true} className="bg-gray-200 w-5/12 h-40 m-2">
                   <Text className="text-xl font-bold">{item.title}</Text>
                   <Text className="text-lg">{item.description}</Text>
                    <Text className="text-xl">{item.price} €</Text>
-                  <Text className="text-xl">{item.date}</Text>
-                 </View>)}/>
+                  <Text className="text-xl">{new Date(item.date).toLocaleDateString()}</Text>
+                 </ScrollView>)}/>
             </View>
           </View> 
         </ScrollView>
-        <TouchableOpacity
-        onPress={() => navigation.navigate("Create Vehicle")}
-        className="absolute bottom-2 right-5 z-50"
-      >
-        <FAB icon="plus" mode="elevated"/>
-      </TouchableOpacity>
+        <FAB icon="plus" onPress={() => navigation.navigate("Create Vehicle")} mode="elevated" className="absolute bottom-2 right-5 z-50"/>
     </SafeAreaView>
   );
 }
