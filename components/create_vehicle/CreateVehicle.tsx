@@ -18,7 +18,7 @@ async function SaveCar(model, nav){
           return '[{"ExtColors":[],"IntColors":[]}]'
       }
       const car_data = await response.json();
-      const data_to_save = {id: next_id, model_id: car_data[0].model_id}
+      const data_to_save = {id: next_id, model_id: car_data[0].model_id, created_at: new Date()}
       var val = await AsyncStorage.getItem('vehicles')
       const new_data = val ? [...JSON.parse(val), {...data_to_save}] : [{...data_to_save}]; // Handle case if 'vehicles' is null
       await AsyncStorage.setItem('vehicles', JSON.stringify(new_data))

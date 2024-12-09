@@ -12,12 +12,13 @@ import VehiclePage from './components/VehiclePage/VehiclhePage';
 import FullScreenCamera from './components/VehiclePage/camera';
 import { PaperProvider } from 'react-native-paper';
 import MaintenanceCreateForm from './components/VehiclePage/MaintenanceCreateForm';
-
+import { TouchableOpacity } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   //AsyncStorage.clear(); //#TODO --> remove this line
+  const [tabkey, setTabKey] = React.useState(0);
   AsyncStorage.getItem('vehicles').then(val => {
     if (val == null) {
       AsyncStorage.setItem('vehicles', JSON.stringify([]));
@@ -56,8 +57,16 @@ export default function App() {
         >
           <Tab.Screen 
             name="Dashboard" 
-            component={Dashboard    } 
-            options={{ headerShown: false }} // Hide header for the tab screens
+            component={(props)=><Dashboard {...props} key={tabkey} time={Date.now()}/>}
+            options={{ headerShown: false, tabBarButton: (props) => (
+              <TouchableOpacity
+                {...props}
+                onPress={() => {
+                  props.onPress(); // Call the default handler
+                  setTabKey((prevKey) => prevKey + 1); // Increment key to force re-render
+                }}
+              />
+            )}} // Hide header for the tab screens
           />
           <Tab.Screen 
             name="Create Vehicle" 
