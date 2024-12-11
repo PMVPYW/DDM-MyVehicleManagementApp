@@ -1,13 +1,12 @@
 import { SafeAreaView, Text, TouchableOpacity, Image, ScrollView, View, FlatList } from "react-native"
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CountryFlag from "react-native-country-flag";
 import { countryToAlpha2 } from "country-to-iso";
 import ValueField from "./ValueField";
 import {FAB} from 'react-native-paper';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 
 const VehiclePage = (props) => {
@@ -16,19 +15,35 @@ const VehiclePage = (props) => {
     const [maintenance, setMaintenance] = useState([]);
 
     //load maintenance from AsyncStorage
-    useEffect(()=>{
-      
-      const loadMaintenance = async () => {
-        const maintenance = await AsyncStorage.getItem('maintenance');
-        console.warn(maintenance)
-        if(maintenance != null) {
-          setMaintenance(JSON.parse(maintenance).filter((item) => item.vehicle_id == props.route.params.vehicle.id).sort((a, b) => new Date(a.date) - new Date(b.date)));
-          console.warn(JSON.parse(maintenance), "main123")
-        } 
-        
-      }
-      loadMaintenance();
-    },[])
+    useFocusEffect(
+      React.useCallback(() => {
+        const loadMaintenance = async () => {
+          try {
+            const maintenance = await AsyncStorage.getItem('maintenance');
+            console.warn(maintenance);
+            if (maintenance != null) {
+              const filteredMaintenance = JSON.parse(maintenance)
+                .filter((item) => item.vehicle_id === props.route.params.vehicle.id)
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+              setMaintenance(filteredMaintenance);
+              console.warn(filteredMaintenance, "main123");
+            }
+          } catch (error) {
+            console.error("Failed to load maintenance data:", error);
+          }
+        };
+    
+        loadMaintenance();
+    
+        // No cleanup logic needed, so return undefined
+        return undefined;
+      }, [props.route.params.vehicle.id])
+    );
+    
+    const deleteCar = async () => {
+      props.route.params.delete(props.route.params.vehicle.id);
+      navigation.goBack();
+    }
 
     console.error(props.route.params?.vehicle?.photo ?? '')//essential in loading foto when coming back from TakePhoto
   return (
@@ -83,13 +98,14 @@ const VehiclePage = (props) => {
             </View>
           </View>
           <View className="w-full h-fit m-4 px-2">
-            <View className="flex flex-row items-center">
+            {props.route.params.vehicle.deleted_at == undefined ? <View className="flex flex-row items-center">
               <Text className="text-2xl font-bold block">Maintenance</Text> <FAB onPress={()=>navigation.navigate("RegisterMaintenance", {vehicle_id: props.route.params.vehicle.id})} className="ml-2" icon="plus" mode="elevated"/>
-            </View>
+            </View> : <></>}
             
-            <View className="flex flex-row justify-around flex-wrap w-full max-w-full">
-              <FlatList numColumns={2} data={maintenance} nestedScrollEnabled={true} keyExtractor={(item) => item.id} key={(item) => item.id} renderItem={({item})=>(
-                <ScrollView nestedScrollEnabled={true} className="bg-gray-200 w-5/12 h-40 m-2">
+            
+            <View className="flex flex-row justify-around flex-wrap w-full max-w-full mx-auto">
+              <FlatList className="mx-auto" numColumns={2} data={maintenance} nestedScrollEnabled={true} keyExtractor={(item) => item.id} key={(item) => item.id} renderItem={({item})=>(
+                <ScrollView nestedScrollEnabled={true} className="bg-gray-200 w-5/12 h-40 m-2 mx-auto">
                   <Text className="text-xl font-bold">{item.title}</Text>
                   <Text className="text-lg">{item.description}</Text>
                    <Text className="text-xl">{item.price} €</Text>
@@ -97,6 +113,11 @@ const VehiclePage = (props) => {
                  </ScrollView>)}/>
             </View>
           </View> 
+          {props.route.params.vehicle.deleted_at != undefined ? <></> :
+          <View className="w-11/12 mx-auto mb-2">
+            <FAB icon="delete" onPress={deleteCar} color="white" style={{backgroundColor: 'red', justifyContent: 'center', flex: 1, alignItems: 'center'}} size="medium" mode="elevated"/>
+          </View>}
+          
         </ScrollView>
         <FAB icon="plus" onPress={() => navigation.navigate("Create Vehicle")} mode="elevated" className="absolute bottom-2 right-5 z-50"/>
     </SafeAreaView>

@@ -35,6 +35,7 @@ const Dashboard = (props) => {
           
           model[0].id = car.id;
           model[0].created_at = car.created_at;
+          model[0].deleted_at = car.deleted_at;
           models.push({...model[0]});
           console.warn(model[0], "mdls-2")
         };
@@ -60,6 +61,16 @@ const Dashboard = (props) => {
   }, [vehicleEvo]);
 
   useEffect(() => {
+
+    const dateSortFunction = (a, b) => {
+      // Convert DD/MM/YYYY to MM/DD/YYYY before creating Date objects
+      const parseDate = (dateStr) => {
+        const [day, month, year] = dateStr.split('/').map(Number);
+        return new Date(year, month - 1, day); // Month is 0-based in JS Date
+      };
+      return parseDate(a) - parseDate(b);
+    }
+
     //vehicle evo
     const sorted_cars = vehicles.sort((a, b) => {
       return new Date(b.created_at) - new Date(a.created_at);
@@ -73,10 +84,19 @@ const Dashboard = (props) => {
       } else {
         mapper[new Date(car.created_at).toLocaleDateString()] += 1;
       }
+      if (car.deleted_at != undefined) {
+        if (!mapper[new Date(car.deleted_at).toLocaleDateString()]) {
+          mapper[new Date(car.deleted_at).toLocaleDateString()] = -1;
+        } else {
+          mapper[new Date(car.deleted_at).toLocaleDateString()] -= 1;
+        }
+      }
+      console.warn(Object.keys(car), car.deleted_at,"deletion")
     });
-    setVehicleEvoLabels(Object.keys(mapper));
+    setVehicleEvoLabels(Object.keys(mapper).sort(dateSortFunction));
+    console.warn(mapper, "mapper")
     var sum = 0;
-    Object.keys(mapper).forEach((key) => {
+    Object.keys(mapper).sort(dateSortFunction).forEach((key) => {
       sum += mapper[key];
       chart_data.push(sum);
     });

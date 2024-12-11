@@ -76,6 +76,7 @@ export default function FullScreenCamera(props) {
                         new_data[index].photo = newPhotoUri;
                     }
                     AsyncStorage.setItem('vehicles', JSON.stringify(new_data)).then(() => {
+                        props.route.params.photo_setter(newPhotoUri);
                         navigation.goBack();
                     });
                 });

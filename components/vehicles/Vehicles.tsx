@@ -16,6 +16,18 @@ const VehiclesScreen = (props) => {
     });
   }, [rerender]);
 
+  const deleteCar = async (id) => {
+    const index = cars.findIndex((car) => car.id === id);
+    if (index < 0)
+    {
+      return;
+    }
+    const arr = [...cars];
+    arr[index].deleted_at = new Date().toISOString();
+    setCars([...arr]);
+    AsyncStorage.setItem('vehicles', JSON.stringify(arr));
+  }
+
   // ListEmptyComponent as a separate function for better readability
   const renderEmptyComponent = () => (
     <View className="flex-1 justify-center items-center">
@@ -47,7 +59,7 @@ const VehiclesScreen = (props) => {
           numColumns={2}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Vehicle vehicle={item} setter_vehicles={setCars} />
+            <Vehicle delete={()=>{deleteCar(item.id)}} vehicle={item} setter_vehicles={setCars} />
           )}/>
       )}
       <TouchableOpacity

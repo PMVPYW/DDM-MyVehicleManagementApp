@@ -51,9 +51,9 @@ const Vehicle = (props: Props) => {
   const [model, setModel] = useState({});
   useEffect(()=>{
     if (Object.keys(props.vehicle).length === 0) {
-      print(props.vehicle)
       return;
     }
+    console.log(props.vehicle.deleted_at, "deleted_at")
   fetch(`https://www.carqueryapi.com/api/0.3?cmd=getModel&model=${props.vehicle?.model_id}`).then(res=>{
     res.json().then(data=>{
       data[0].id = props.vehicle.id;
@@ -61,17 +61,15 @@ const Vehicle = (props: Props) => {
     })
   }).catch(err=>console.error(err));
 }, [props.vehicle]);
-  
-
  
   return (
-    <TouchableOpacity onPress={()=>{console.warn(model.id);navigation.navigate('Vehicle', {vehicle: props.vehicle, model: {...model}, setter_vehicles: props.setter_vehicles})}} className="flex flex-grow w-1/2 my-2">
+    <TouchableOpacity onPress={()=>{console.warn(model.id);navigation.navigate('Vehicle', {delete: props.delete, vehicle: props.vehicle, model: {...model}, setter_vehicles: props.setter_vehicles})}} className="flex flex-grow w-1/2 my-2">
         <View className="w-[95%] bg-gray-300 h-72 rounded-xl mx-auto">
           <View className="flex justify-center items-center w-full h-32 bg-gray-400 rounded-t-xl">
           {props.vehicle.photo != undefined ? <Image className="w-full h-full object-cover rounded-t-xl" source={{uri: props.vehicle.photo}}/> : <MaterialCommunityIcons name="camera" size={40} color="black"/>}
           </View>
           <View className="h-40 w-full px-2 flex justify-evenly">
-            <Text>Make: {model?.model_make_display ?? props.vehicle?.model_id}</Text>
+            <Text className="w-full text-start">Make: {model?.model_make_display ?? props.vehicle?.model_id}{props.vehicle.deleted_at == undefined ? <MaterialCommunityIcons name='garage' size={20}/> : <></>}</Text>
             <Text>Model: {model?.model_name}</Text>
             <Text>Year: {model?.model_year}</Text>
             <View className="flex flex-row items-center">
