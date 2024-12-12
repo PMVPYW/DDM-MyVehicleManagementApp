@@ -12,12 +12,13 @@ import VehiclePage from './components/VehiclePage/VehiclhePage';
 import FullScreenCamera from './components/VehiclePage/camera';
 import { PaperProvider } from 'react-native-paper';
 import MaintenanceCreateForm from './components/VehiclePage/MaintenanceCreateForm';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, LogBox } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   //AsyncStorage.clear(); //#TODO --> remove this line
+  LogBox.ignoreAllLogs(true);
   const [tabkey, setTabKey] = React.useState(0);
   AsyncStorage.getItem('vehicles').then(val => {
     if (val == null) {
