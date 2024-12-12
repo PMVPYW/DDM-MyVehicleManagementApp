@@ -114,6 +114,13 @@ const Dashboard = (props) => {
       } else {
         brandMapper[car.make_display] += 1;
       }
+      if (car.deleted_at != undefined) {
+        if (!brandMapper[car.make_display]) {
+          brandMapper[car.make_display] = -1;
+        } else {
+          brandMapper[car.make_display] -= 1;
+        }
+      }
     });
     const brandDistribution = [];
     const totalBrands = Object.keys(brandMapper).length;
